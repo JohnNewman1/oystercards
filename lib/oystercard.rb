@@ -22,7 +22,7 @@ class Oystercard
     @status
   end
 
-  def touch_in
+  def touch_in(station)
     raise "Insufficient funds" if @balance < MINIMUM_AMOUNT
     @status = true
   end

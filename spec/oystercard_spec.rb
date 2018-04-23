@@ -26,26 +26,36 @@ describe Oystercard do
   describe '#touch_in' do
     it 'should return in_journey to be true when user touches in' do
       subject.top_up(Oystercard::MINIMUM_AMOUNT)
-      subject.touch_in
+      subject.touch_in(:station)
       expect(subject.in_journey?).to be true
     end
 
     it 'should raises an error if balance is less than minimum amount' do
-      expect { subject.touch_in }.to raise_error "Insufficient funds"
+      expect { subject.touch_in(:station) }.to raise_error "Insufficient funds"
     end
+
+    it 'responds to one argument' do
+     expect(subject).to respond_to(:touch_in).with(1).argument
+    end
+
+    
+
+
+
+
   end
 
   describe '#touch_out' do
     it 'should return in_journey to be false when user touches out' do
       subject.top_up(Oystercard::MINIMUM_AMOUNT)
-      subject.touch_in
+      subject.touch_in(:station)
       subject.touch_out
       expect(subject.in_journey?).to be false
     end
 
     it 'should deduct journey cost from balance when user touches out' do
       subject.top_up(Oystercard::MINIMUM_AMOUNT)
-      subject.touch_in
+      subject.touch_in(:station)
       expect { subject.touch_out }.to change{ subject.balance }.by -Oystercard::JOURNEY_COST
     end
   end
