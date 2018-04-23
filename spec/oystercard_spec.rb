@@ -23,4 +23,28 @@ describe Oystercard do
       expect(subject.deduct(10)).to eq 10
     end
   end
+
+  describe '#in_journey?' do
+    it "should let you know the status of user's journey" do
+      expect(subject.in_journey?).to be false
+    end
+  end
+
+  it { is_expected.to respond_to(:touch_out)}
+
+  describe '#touch_in' do
+    it 'should return in_journey to be true when user touches in' do
+      subject.touch_in
+      expect(subject.in_journey?).to be true
+    end
+  end
+
+  describe '#touch_out' do
+    it 'should return in_journey to be false when user touches out' do
+      subject.touch_in
+      subject.touch_out
+      expect(subject.in_journey?).to be false
+    end
+  end
+
 end
