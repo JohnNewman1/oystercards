@@ -1,6 +1,9 @@
 require 'oystercard'
 
 describe Oystercard do
+
+  let(:station) { double('station', name: :liverpool_street) }
+
   describe '#balance' do
     it 'should have a default balance of 0' do
       expect(subject.balance).to eq 0
@@ -26,37 +29,44 @@ describe Oystercard do
   describe '#touch_in' do
     it 'should return in_journey to be true when user touches in' do
       subject.top_up(Oystercard::MINIMUM_AMOUNT)
-      subject.touch_in(:station)
+      subject.touch_in(station)
       expect(subject.in_journey?).to be true
     end
 
     it 'should raises an error if balance is less than minimum amount' do
-      expect { subject.touch_in(:station) }.to raise_error "Insufficient funds"
+      expect { subject.touch_in(station) }.to raise_error "Insufficient funds"
     end
 
     it 'responds to one argument' do
      expect(subject).to respond_to(:touch_in).with(1).argument
     end
 
-    
-
-
-
-
+    it 'should remember station after touch in' do
+      subject.top_up(Oystercard::MINIMUM_AMOUNT)
+      subject.touch_in(station)
+      expect(subject.entry_station).to eq station.name
+    end
   end
 
   describe '#touch_out' do
     it 'should return in_journey to be false when user touches out' do
       subject.top_up(Oystercard::MINIMUM_AMOUNT)
-      subject.touch_in(:station)
+      subject.touch_in(station)
       subject.touch_out
       expect(subject.in_journey?).to be false
     end
 
     it 'should deduct journey cost from balance when user touches out' do
       subject.top_up(Oystercard::MINIMUM_AMOUNT)
-      subject.touch_in(:station)
+      subject.touch_in(station)
       expect { subject.touch_out }.to change{ subject.balance }.by -Oystercard::JOURNEY_COST
+    end
+
+    it 'should make entry_station equal to nil on touch out' do
+      subject.top_up(Oystercard::MINIMUM_AMOUNT)
+      subject.touch_in(station)
+      subject.touch_out
+      expect(subject.entry_station).to be_nil
     end
   end
 
