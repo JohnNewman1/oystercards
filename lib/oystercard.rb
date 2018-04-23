@@ -1,6 +1,7 @@
 class Oystercard
   LIMIT_AMOUNT = 90
   MINIMUM_AMOUNT = 1
+  JOURNEY_COST = 1
   attr_reader :balance, :status
 
   def initialize
@@ -17,10 +18,6 @@ class Oystercard
     @balance + amount > LIMIT_AMOUNT
   end
 
-  def deduct(amount)
-    @balance -= amount
-  end
-
   def in_journey?
     @status
   end
@@ -32,5 +29,12 @@ class Oystercard
 
   def touch_out
     @status = false
+    deduct(JOURNEY_COST)
+  end
+
+  private
+
+  def deduct(amount)
+    @balance -= amount
   end
 end

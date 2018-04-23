@@ -17,13 +17,6 @@ describe Oystercard do
     end
   end
 
-  describe '#deduct' do
-    it 'should update the balance by -10' do
-      subject.top_up(20)
-      expect(subject.deduct(10)).to eq 10
-    end
-  end
-
   describe '#in_journey?' do
     it "should let you know the status of user's journey" do
       expect(subject.in_journey?).to be false
@@ -48,6 +41,12 @@ describe Oystercard do
       subject.touch_in
       subject.touch_out
       expect(subject.in_journey?).to be false
+    end
+
+    it 'should deduct journey cost from balance when user touches out' do
+      subject.top_up(Oystercard::MINIMUM_AMOUNT)
+      subject.touch_in
+      expect { subject.touch_out }.to change{ subject.balance }.by -Oystercard::JOURNEY_COST
     end
   end
 
