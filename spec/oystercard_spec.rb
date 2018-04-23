@@ -30,17 +30,21 @@ describe Oystercard do
     end
   end
 
-  it { is_expected.to respond_to(:touch_out)}
-
   describe '#touch_in' do
     it 'should return in_journey to be true when user touches in' do
+      subject.top_up(Oystercard::MINIMUM_AMOUNT)
       subject.touch_in
       expect(subject.in_journey?).to be true
+    end
+
+    it 'should raises an error if balance is less than minimum amount' do
+      expect { subject.touch_in }.to raise_error "Insufficient funds"
     end
   end
 
   describe '#touch_out' do
     it 'should return in_journey to be false when user touches out' do
+      subject.top_up(Oystercard::MINIMUM_AMOUNT)
       subject.touch_in
       subject.touch_out
       expect(subject.in_journey?).to be false
