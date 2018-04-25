@@ -1,70 +1,41 @@
-require 'Journey'
+require 'journey'
 
 describe Journey do
 
-  let(:station) { double(:station, name: :liverpool_street) }
-  let(:station2) { double :station, name: :London_Bridge }
-  let(:card) { double(:card, balance: 10, deduct: nil) }
+  let(:station) { double :station, name: :bank, zone: 6}
 
-  describe '#in_journey?' do
-    it "should let you know the status of user's journey" do
-      expect(subject.in_journey?).to be false
+  describe '#start' do
+    it 'entry station equals station name ' do
+      subject.start(station)
+      expect(subject.entry_station).to eq(station.name)
     end
   end
 
-  describe '#exit_station' do
-    it 'remember the exit station on touch out' do
-      subject.touch_in(station, card)
-      subject.touch_out(station2, card)
-      expect(subject.exit_station).to eq :London_Bridge
+  describe '#finish' do
+    it 'exit station equals station name' do
+      subject.finish(station)
+      expect(subject.exit_station).to eq(station.name)
     end
   end
 
-  describe '#touch_in' do
-      let(:card_out) {double(:money2, balance: 0)}
-    it 'should return in_journey to be true when user touches in' do
-      subject.touch_in(station, card)
-      expect(subject.in_journey?).to be true
+
+  describe '#fare' do
+    it 'expects fare to be 1 if journey is complete' do
+      subject.start(station)
+      subject.finish(station)
+      expect(subject.fare).to eq Journey::MINIMUM_FARE
     end
 
-    it 'should raises an error if balance is less than minimum amount' do
-      expect { subject.touch_in(station, card_out) }.to raise_error "Insufficient funds"
+    it 'expects fare to be penalty if journey is incomplete' do
+      subject.finish(station)
+      expect(subject.fare).to eq Journey::PENALTY_FARE
     end
 
-    it 'should remember station after touch in' do
-      subject.touch_in(station, card)
-      expect(subject.entry_station).to eq station.name
+    it 'expects fare to be penalty if journey is incomplete part 2' do
+      subject.start(station)
+      subject.start(station)
+      expect(subject.fare).to eq Journey::PENALTY_FARE
     end
   end
-
-  describe '#touch_out' do
-    before(:each) do
-      subject.touch_in(station, card)
-      subject.touch_out(station2, card)
-    end
-    it 'should return in_journey to be false when user touches out' do
-      expect(subject.in_journey?).to be false
-    end
-
-    it 'should make entry_station equal to nil on touch out' do
-      expect(subject.entry_station).to be_nil
-    end
-  end
-
-  describe '#journey_log' do
-  it 'checks if it returns an empty array' do
-    expect(subject.journey_log).to eq []
-  end
-  it 'checks if journey_list contains one journey' do
-    subject.touch_in(station, card)
-    subject.touch_out(station2, card)
-    expect(subject.journey_log.size).to eq 1
-  end
-  it 'checks if journey_list contains a hash' do
-    subject.touch_in(station, card)
-    subject.touch_out(station2, card)
-    expect(subject.journey_log).to eq [{:start=>:liverpool_street, :end=>:London_Bridge}]
-  end
-end
 
 end

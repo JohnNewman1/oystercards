@@ -1,18 +1,13 @@
-require 'station'
+require 'Station'
 
 describe Station do
-  let(:name) {:bank}
-  let(:zone) {1}
-
-  subject { described_class.new(name, zone) }
-
-  describe '#initialize' do
-    it 'must make its name on initialization' do
-      expect(subject.name).to eq :bank
-    end
-    it 'must make its zone on initialization' do
-      expect(subject.zone).to eq 1
-    end
+  it 'will allow you to make a name on initialization' do
+    station = Station.new(:bank, 2)
+    expect(station.name).to eq :bank
   end
 
+  it 'will allow you to make a zone on initialization' do
+    station = Station.new(:bank, 2)
+    expect(station.zone).to eq 2
+  end
 end
